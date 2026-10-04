@@ -1,0 +1,65 @@
+# Runs on every pull request and every push to main.
+# A red X on a PR means something is broken: fix it before merging.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web app (types, lint, format, tests, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4 # reads the pnpm version from package.json
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm build
+
+  pipeline:
+    name: Data pipeline (lint, types, tests)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: pitchlab
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: bash tasks.sh setup
+      - run: bash tasks.sh check
+
+  data:
+    name: Exported data is well-formed
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check every JSON file parses and matches the schema version
+        run: |
+          python3 - <<'PY'
+          import json, pathlib, sys
+          root = pathlib.Path("public/data")
+          index = json.loads((root / "index.json").read_text())
+          version = index["schema_version"]
+          ids = {p["id"] for p in index["pitchers"]}
+          files = {int(f.stem) for f in (root / "pitchers").glob("*.json")}
+          problems = []
+          if ids != files:
+              problems.append(f"index lists {len(ids)} pitchers but {len(files)} files exist")
+          for f in (root / "pitchers").glob("*.json"):
+              data = json.loads(f.read_text())
+              if data["schema_version"] != version:
+                  problems.append(f"{f.name}: schema {data['schema_version']} != {version}")
+          print(f"{len(files)} pitcher files, schema v{version}, data through {index['through']}")
+          if problems:
+              print("\n".join(problems)); sys.exit(1)
+          PY
