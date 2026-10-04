@@ -6,3 +6,6 @@ coverage
 .env
 .env.*
 !.env.example
+
+# Screenshots and files Claude drops into the folder; keep them out of the repo.
+Claude outputs/
