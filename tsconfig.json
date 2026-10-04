@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    /* --- Base: on in every project (Total TypeScript cheat sheet) --- */
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "es2022",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    /* --- Strictness --- */
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    /* --- Not transpiling with tsc: Vite builds, tsc only type-checks --- */
+    "module": "preserve",
+    "noEmit": true,
+
+    /* --- Runs in the browser --- */
+    "lib": ["es2022", "dom", "dom.iterable"],
+
+    /* --- React --- */
+    "jsx": "react-jsx",
+
+    /* --- Import "@/thing" instead of "../../../thing" --- */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src", "vite.config.ts", "eslint.config.js"]
+}

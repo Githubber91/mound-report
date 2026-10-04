@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------
+   Mound Report design tokens. Everything visual traces back to this
+   block, so changing the feel of the app means editing here, not
+   hunting through components.
+
+   Direction: a modern scouting report. Condensed scoreboard type for
+   names and numbers, a calm body face, neutrals tinted toward infield
+   grass, and colour reserved for the pitches themselves.
+   --------------------------------------------------------------- */
+@theme {
+  --font-display:
+    "Barlow Condensed", "Arial Narrow", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Source Sans 3", ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-canvas: oklch(97.5% 0.006 150);
+  --color-surface: oklch(100% 0 0);
+  --color-border: oklch(90% 0.01 150);
+  --color-ink: oklch(22% 0.02 155);
+  --color-muted: oklch(50% 0.02 155);
+  --color-accent: oklch(46% 0.11 155);
+  --color-accent-soft: oklch(94% 0.03 155);
+
+  /* Pitch families: fastballs warm, breaking balls cool, offspeed green. */
+  --color-pitch-ff: oklch(58% 0.2 25);
+  --color-pitch-si: oklch(66% 0.17 50);
+  --color-pitch-fc: oklch(52% 0.11 55);
+  --color-pitch-sl: oklch(76% 0.15 95);
+  --color-pitch-st: oklch(68% 0.14 80);
+  --color-pitch-sv: oklch(55% 0.17 300);
+  --color-pitch-cu: oklch(55% 0.15 255);
+  --color-pitch-kc: oklch(45% 0.15 275);
+  --color-pitch-ch: oklch(62% 0.15 150);
+  --color-pitch-fs: oklch(62% 0.11 195);
+  --color-pitch-other: oklch(62% 0.01 155);
+
+  --radius-card: 0.75rem;
+}
+
+@layer theme {
+  :root {
+    color-scheme: light dark;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --color-canvas: oklch(17% 0.012 155);
+      --color-surface: oklch(21% 0.014 155);
+      --color-border: oklch(30% 0.016 155);
+      --color-ink: oklch(95% 0.006 155);
+      --color-muted: oklch(72% 0.015 155);
+      --color-accent: oklch(76% 0.13 155);
+      --color-accent-soft: oklch(28% 0.04 155);
+      --color-pitch-sl: oklch(80% 0.14 95);
+      --color-pitch-kc: oklch(60% 0.14 275);
+      --color-pitch-fc: oklch(62% 0.11 55);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --color-canvas: oklch(17% 0.012 155);
+    --color-surface: oklch(21% 0.014 155);
+    --color-border: oklch(30% 0.016 155);
+    --color-ink: oklch(95% 0.006 155);
+    --color-muted: oklch(72% 0.015 155);
+    --color-accent: oklch(76% 0.13 155);
+    --color-accent-soft: oklch(28% 0.04 155);
+    --color-pitch-sl: oklch(80% 0.14 95);
+    --color-pitch-kc: oklch(60% 0.14 275);
+    --color-pitch-fc: oklch(62% 0.11 55);
+  }
+}
+
+@layer base {
+  body {
+    background-color: var(--color-canvas);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    /* Keep content clear of the phone's notch and home bar in the Android app. */
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  /* Visible focus for keyboard users is a baseline accessibility
+     requirement, not a style choice. */
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
